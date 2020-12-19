@@ -113,7 +113,6 @@ app.post("/login", express.json(), (req, res) => {
 
 app.get("/me", auth(NonAdminDigestKey), (req, res) => {
   const [user] = Users.readRec({ key: "username", value: req.user });
-  console.log(user, "user");
   if (user) {
     return res.json(user);
   }
