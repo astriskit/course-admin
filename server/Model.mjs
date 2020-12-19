@@ -2,21 +2,32 @@ import lowDb from "lowdb";
 import FileSync from "lowdb/adapters/FileSync.js";
 import { nanoid } from "nanoid";
 
-const getDBHandle = (db) => {
-  const adapter = new FileSync(`./db/${db}.json`);
+const getDBHandle = (db, adapterOpts) => {
+  let adapter;
+  if (!db.includes(".")) {
+    db += ".json";
+  }
+  let dbPath = `./db/${db}`;
+  if (adapterOpts) {
+    adapter = new FileSync(dbPath, {
+      defaultValue: { data: [] },
+      ...adapterOpts,
+    });
+  } else {
+    adapter = new FileSync(dbPath, { defaultValue: { data: [] } });
+  }
   const dbHandle = lowDb(adapter);
-  dbHandle.defaults({ data: [] }).write();
   return dbHandle;
 };
 
 const idLength = 8;
 
 export class Model {
-  constructor(db) {
-    this.db = getDBHandle(db);
+  constructor(db, adapterOpts = null) {
+    this.db = getDBHandle(db, adapterOpts);
   }
 
-  read(opts) {
+  readRec(opts) {
     const {
       perPage = "",
       page = "",
@@ -24,12 +35,9 @@ export class Model {
       sort: { by: sortBy, order = "desc" } = { by: "", order: "" },
     } = opts || {};
 
-    console.log(key, value);
-
     let data = this.db.get("data");
     if (key && value) {
       data = data.filter([key, value]);
-      console.log("data", data.value());
     }
     if (sortBy && order) {
       data = data.orderBy(sortBy, order);
