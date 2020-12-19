@@ -3,13 +3,14 @@ import passport from "passport";
 import { default as PassportHttp } from "passport-http";
 import Cryptr from "cryptr";
 import dotEnv from "dotenv";
+import cors from "cors";
 import { Model } from "./Model.mjs";
 import { addCrudRouter } from "./addCrudRouter.mjs";
 
 dotEnv.config();
 
 const app = express();
-const port = 3000;
+const port = 3001;
 const logger = console.log;
 const debug = true;
 
@@ -37,6 +38,12 @@ const Users = new Model("users.enc", {
   ...(userModelDefault ? { defaultValue: userModelDefault } : {}),
 });
 
+app.use(
+  cors({
+    exposedHeaders: ["www-authenticate"],
+  })
+);
+
 app.use((req, _, next) => {
   if (debug) {
     logger(`Logging requests: ${req.url}, ${req.method}`);
@@ -46,34 +53,33 @@ app.use((req, _, next) => {
 
 const AdminDigestKey = "admin";
 const NonAdminDigestKey = "non-admin";
-const genDigestStrategy = (admin = false) => {
-  return new PassportHttp.DigestStrategy(
-    { qop: "auth" },
-    function (username, cb) {
-      try {
-        const [user = null] = Users.readRec({
-          filter: { key: "username", value: username },
-        });
-        if (user) {
+const genBasicStrategy = (admin = false) => {
+  return new PassportHttp.BasicStrategy(function (username, password, cb) {
+    try {
+      const [user = null] = Users.readRec({
+        filter: { key: "username", value: username },
+      });
+      if (user) {
+        if (user.password === password) {
           if (admin) {
             if (user.admin) {
-              return cb(null, user.username, user.password);
+              return cb(null, true);
             }
             return cb(null, false);
           }
-          return cb(null, user.username, user.password);
+          return cb(null, true);
         }
-        return cb(null, false);
-      } catch (err) {
-        return cb(err);
       }
+      return cb(null, false);
+    } catch (err) {
+      return cb(err);
     }
-  );
+  });
 };
 
-passport.use(AdminDigestKey, genDigestStrategy(true));
+passport.use(AdminDigestKey, genBasicStrategy(true));
 
-passport.use(NonAdminDigestKey, genDigestStrategy(false));
+passport.use(NonAdminDigestKey, genBasicStrategy(false));
 
 const auth = (key) => {
   return passport.authenticate(key, {
@@ -89,8 +95,33 @@ addCrudRouter(app, "/course", Courses, auth(NonAdminDigestKey));
 
 addCrudRouter(app, "/user", Users, auth(AdminDigestKey));
 
+app.post("/login", express.json(), (req, res) => {
+  if (req.body.username && req.body.password) {
+    const [user] = Users.readRec({
+      key: "username",
+      value: req.body.username,
+    });
+    if (user && user.password === req.body.password) {
+      return res.json({
+        login: true,
+      });
+    }
+    return res.status(401).json({ login: false });
+  }
+  return res.status(400).json();
+});
+
+app.get("/me", auth(NonAdminDigestKey), (req, res) => {
+  const [user] = Users.readRec({ key: "username", value: req.user });
+  console.log(user, "user");
+  if (user) {
+    return res.json(user);
+  }
+  return res.status(404).json({ message: "User not found." });
+});
+
 app.listen(port, () => {
-  logger(`server started on host/3000`);
+  logger(`server started on host/${port}`);
 });
 
 export { app };
