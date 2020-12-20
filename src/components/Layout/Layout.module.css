@@ -1,0 +1,13 @@
+.header {
+  text-align: center;
+}
+
+.header :global(.ant-spin) {
+  color: whitesmoke;
+}
+
+.content {
+  margin: 15px;
+  max-height: 95vh;
+  overflow: auto;
+}
