@@ -1,6 +1,6 @@
 import bodyParser from "body-parser";
 
-export const addCrudRouter = (app, key, model, authMw) => {
+export const addCrudRouter = (app, key, model, authMw, onDelete = null) => {
   const list = `${key}/list`;
   const listOne = `${key}/:id`;
   const createOne = `${key}/create`;
@@ -63,6 +63,7 @@ export const addCrudRouter = (app, key, model, authMw) => {
     const id = req.params.id;
     if (req.model.readRec({ filter: { key: "id", value: id } }).length) {
       req.model.delete(id);
+      onDelete && onDelete(id);
       return res.status(204).json();
     }
     return res.status(404).json({ message: "record not found" });

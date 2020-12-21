@@ -91,7 +91,16 @@ const Students = new Model("students");
 addCrudRouter(app, "/student", Students, auth(NonAdminDigestKey));
 
 const Courses = new Model("courses");
-addCrudRouter(app, "/course", Courses, auth(NonAdminDigestKey));
+const hookDelete = (id) => {
+  Students.db
+    .get("data")
+    .map((student) => {
+      student.courses = student.courses.filter((course) => course !== id);
+      return student;
+    })
+    .write();
+};
+addCrudRouter(app, "/course", Courses, auth(NonAdminDigestKey), hookDelete);
 
 addCrudRouter(app, "/user", Users, auth(AdminDigestKey));
 
