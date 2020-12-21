@@ -3,7 +3,7 @@ import { app, students, courses, axios } from "../../App.atom";
 import { useFetch } from "../../utils";
 import { student, course } from "../../api-service";
 import { useAtomValue, useUpdateAtom } from "jotai/utils";
-import { ColGen } from "../../index.types";
+import { ColGen, ListData } from "../../index.types";
 import { Tag, Card, Table, Button } from "antd";
 import { Link } from "react-router-dom";
 import {
@@ -12,7 +12,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 
-const transformData = (res: any): Student[] => res.data;
+const transformData = (res: any): ListData<Student> => res.data;
 
 const cols: ColGen<Student> = ({ courses: _courses, genDelete }) => [
   {
@@ -86,7 +86,9 @@ export const StudentList = () => {
   const handlePageChange = (page: number, perPage?: number) => {
     request({
       read: () =>
-        student.READ({ pagination: { page, perPage: perPage || 10 } }),
+        student.READ({
+          pagination: { page, perPage: perPage || 10 },
+        }),
       target: students,
       transformData,
     });
@@ -115,10 +117,10 @@ export const StudentList = () => {
     >
       <Table<Student>
         rowKey={({ id }) => id}
-        dataSource={data}
-        columns={cols({ courses: crses, genDelete })}
+        dataSource={data.data}
+        columns={cols({ courses: crses.data, genDelete })}
         loading={loading}
-        pagination={{ onChange: handlePageChange }}
+        pagination={{ onChange: handlePageChange, total: data.total }}
       />
     </Card>
   );

@@ -79,7 +79,7 @@ export const login = (username: string, password: string) => {
 };
 
 export const me = () => {
-  return request("/me", "get");
+  return request(`/me/${getUserName()}`, "get");
 };
 
 export const student = crud("/student");

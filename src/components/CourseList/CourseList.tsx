@@ -1,7 +1,7 @@
 import { app, courses, axios } from "../../App.atom";
 import { useFetch } from "../../utils";
 import { course } from "../../api-service";
-import { Course, ColGen } from "../../index.types";
+import { Course, ColGen, ListData } from "../../index.types";
 import { useAtomValue, useUpdateAtom } from "jotai/utils";
 import { Tag, Card, Table, Button } from "antd";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 
-const transformData = (res: any): Course[] => res.data;
+const transformData = (res: any): ListData<Course> => res.data;
 
 export const cols: ColGen<Course> = ({ genDelete }) => [
   {
@@ -94,10 +94,10 @@ export const CourseList = () => {
     >
       <Table<Course>
         rowKey={({ id }) => id}
-        dataSource={data}
+        dataSource={data.data}
         columns={cols({ genDelete })}
         loading={loading}
-        pagination={{ onChange: handlePageChange }}
+        pagination={{ onChange: handlePageChange, total: data.total }}
       />
     </Card>
   );

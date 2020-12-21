@@ -46,11 +46,11 @@ export const CourseSelect = ({
         allowClear
         showSearch
       >
-        {courses.map((course) => (
+        {courses?.data?.map((course) => (
           <Select.Option key={course.id} value={course.id}>
             {course.title}
           </Select.Option>
-        ))}
+        )) ?? null}
       </Select>
       <Button
         icon={<ReloadOutlined />}

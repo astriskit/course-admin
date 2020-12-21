@@ -87,3 +87,8 @@ export interface Opts {
 export interface ColGen<T> {
   (opts: Opts): ColumnsType<T>;
 }
+
+export type ListData<T> = {
+  data: T[];
+  total: number;
+};

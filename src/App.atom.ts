@@ -33,8 +33,15 @@ export const profile = atom({
   admin: false,
 });
 
-export const students = atom<Student[]>([]);
-export const courses = atom<Course[]>([]);
+export const students = atom<{ data: Student[]; total: number }>({
+  data: [],
+  total: 0,
+});
+
+export const courses = atom<{ data: Course[]; total: number }>({
+  data: [],
+  total: 0,
+});
 
 export const app = atom({
   loading: false,
@@ -67,7 +74,10 @@ export const axios = atom(null, async (get, set, update: RequestUpdate) => {
       }
       if (deleteId) {
         let targetData = get(target);
-        targetData = targetData.filter((d: any) => d[deleteKey] !== deleteId);
+        targetData.data = targetData.data.filter(
+          (d: any) => d[deleteKey] !== deleteId
+        );
+        targetData.count += 1;
         set(target, targetData);
       } else {
         set(target, data);
