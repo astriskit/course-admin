@@ -55,12 +55,12 @@ const crud = (key: string) => {
   const f_createOne = (record: any) =>
     request(createOne, "POST", { data: record });
   const f_listOne = (id: string) => request(listOne(id), "GET");
-  const f_list = (opts?: ListOpts) =>
-    request(list, "GET", {
-      data: new URLSearchParams(
-        getListOpts(opts || {}).filter((val) => val[1])
-      ),
-    });
+  const f_list = (opts?: ListOpts) => {
+    const params = new URLSearchParams(
+      getListOpts(opts || {}).filter((val) => val[1])
+    ).toString();
+    return request(`${list}?${params}`, "GET");
+  };
   const f_updateOne = (id: string, record: any) =>
     request(updateOne(id), "PUT", { data: record });
   const f_deleteOne = (id: string) => request(deleteOne(id), "DELETE");
