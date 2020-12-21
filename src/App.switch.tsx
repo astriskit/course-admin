@@ -1,68 +1,88 @@
+// @ts-nocheck
 import { Login } from "./components";
-import { LoggedIn } from "./App.atom";
-import { PermitIf, Home, AuthHome } from "./components";
-import { Switch, Redirect } from "react-router-dom";
-import { useAtom } from "jotai";
+import { loggedIn } from "./App.atom";
+import { Home, AuthHome } from "./components";
+import { Switch, Redirect, Route, withRouter } from "react-router-dom";
+import { useAtomValue } from "jotai/utils";
+import { withValid } from "./utils";
 
 const Courses = () => <div>Hello Courses!</div>;
 const Students = () => <div>Hello Students</div>;
 
-export const AppSwitch = () => {
-  const [loggedIn] = useAtom(LoggedIn);
+const withValidRouter = (c) => withRouter(withValid(c));
 
-  const renderIfLoggedIn = () => loggedIn;
-  const renderIfNotLoggedIn = () => !loggedIn;
+export const AppSwitch = () => {
+  const isLoggedIn = useAtomValue(loggedIn);
+
+  const renderIfLoggedIn = () => isLoggedIn;
+  const renderIfNotLoggedIn = () => !isLoggedIn;
 
   return (
     <Switch>
-      <PermitIf
+      <Route
         exact
         path="/student/list"
-        isValid={renderIfLoggedIn}
-        renderIfValid={Students}
+        component={withValidRouter({
+          isValid: renderIfLoggedIn,
+          renderIfValid: Students,
+        })}
       />
-      <PermitIf
+      <Route
         exact
         path="/student/add"
-        isValid={renderIfLoggedIn}
-        renderIfValid={Students}
+        component={withValidRouter({
+          isValid: renderIfLoggedIn,
+          renderIfValid: Students,
+        })}
       />
-      <PermitIf
+      <Route
         exact
         path="/student/edit"
-        isValid={renderIfLoggedIn}
-        renderIfValid={Students}
+        component={withValidRouter({
+          isValid: renderIfLoggedIn,
+          renderIfValid: Students,
+        })}
       />
-      <PermitIf
+      <Route
         exact
         path="/course/list"
-        isValid={renderIfLoggedIn}
-        renderIfValid={Courses}
+        component={withValidRouter({
+          isValid: renderIfLoggedIn,
+          renderIfValid: Courses,
+        })}
       />
-      <PermitIf
+      <Route
         exact
         path="/course/add"
-        isValid={renderIfLoggedIn}
-        renderIfValid={Courses}
+        component={withValidRouter({
+          isValid: renderIfLoggedIn,
+          renderIfValid: Courses,
+        })}
       />
-      <PermitIf
+      <Route
         exact
         path="/course/edit"
-        isValid={renderIfLoggedIn}
-        renderIfValid={Courses}
+        component={withValidRouter({
+          isValid: renderIfLoggedIn,
+          renderIfValid: Courses,
+        })}
       />
-      <PermitIf
+      <Route
         exact
         path="/login"
-        isValid={renderIfNotLoggedIn}
-        renderIfValid={Login}
+        component={withValidRouter({
+          isValid: renderIfNotLoggedIn,
+          renderIfValid: Login,
+        })}
       />
-      <PermitIf
+      <Route
         exact
         path="/"
-        isValid={renderIfLoggedIn}
-        renderIfValid={AuthHome}
-        renderIfNotValid={Home}
+        component={withValidRouter({
+          isValid: renderIfLoggedIn,
+          renderIfValid: AuthHome,
+          renderIfNotValid: Home,
+        })}
       />
       <Redirect to="/login" />
     </Switch>
