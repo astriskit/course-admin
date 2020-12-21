@@ -1,3 +1,6 @@
 [submodule "server"]
 	path = server
 	url = https://github.com/astriskit/course-admin-api.git
+[submodule "www"]
+	path = www
+	url = https://e0bd31b3-0510-4a70-a5cf-23e29b01e7f3@api.glitch.com/git/towering-buttered-lily
