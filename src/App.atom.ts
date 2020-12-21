@@ -41,10 +41,18 @@ export const app = atom({
 });
 
 export const axios = atom(null, async (_, set, update: RequestUpdate) => {
-  const { target, config, transformData, read } = update;
+  const {
+    target,
+    config,
+    transformData,
+    read,
+    handleLoad = true,
+    onSuccess,
+    onFail,
+  } = update;
   if (target && (read || config)) {
     try {
-      set(app, { loading: true });
+      handleLoad && set(app, { loading: true });
       let data = null;
       if (read) {
         data = await read();
@@ -56,12 +64,17 @@ export const axios = atom(null, async (_, set, update: RequestUpdate) => {
         data = transformData(data);
       }
       set(target, data);
-      set(app, { loading: false });
+      handleLoad && set(app, { loading: false });
+      onSuccess && onSuccess(data);
     } catch (err) {
       console.error(err, "axios-atom");
-      throw err;
+      if (onFail) {
+        onFail(err);
+      } else {
+        throw err;
+      }
     } finally {
-      set(app, { loading: false });
+      handleLoad && set(app, { loading: false });
     }
   } else {
     throw new Error("'target' and/or 'config' must be defined");

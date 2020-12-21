@@ -5,7 +5,7 @@ import { useUpdateAtom } from "jotai/utils";
 import { atom, useAtom } from "jotai";
 import { app, axios } from "../../App.atom";
 import { course as courseService } from "../../api-service";
-import { Course } from "../../index.types";
+import { Course, Reader } from "../../index.types";
 
 const initCourse = {
   id: "",
@@ -15,23 +15,6 @@ const initCourse = {
 };
 
 const course = atom<Course>(initCourse);
-
-interface OnSuccess {
-  (data: any): void;
-}
-interface OnFail {
-  (data: any): void;
-}
-type PromiseCB = {
-  (): Promise<any>;
-};
-interface Reader {
-  (
-    id: string,
-    onSuccess: OnSuccess | undefined,
-    onFail: OnFail | undefined
-  ): PromiseCB;
-}
 
 const reader: Reader = (
   id: string,
@@ -106,7 +89,12 @@ export const CourseAddEdit: React.FC<RouteChildrenProps> = () => {
   };
 
   return (
-    <Card type="inner" loading={loading}>
+    <Card
+      type="inner"
+      loading={loading}
+      title={`${record?.id ? "Edit" : "Add"} course`}
+      className="full-inner-card-body"
+    >
       <Form
         name="addEditCourse"
         form={form}

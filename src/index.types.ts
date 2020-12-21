@@ -46,9 +46,29 @@ export type AppState = {
   };
 };
 
+export interface OnSuccess {
+  (data: any): void;
+}
+export interface OnFail {
+  (data: any): void;
+}
+export type PromiseCB = {
+  (): Promise<any>;
+};
+export interface Reader {
+  (
+    id: string,
+    onSuccess: OnSuccess | undefined,
+    onFail: OnFail | undefined
+  ): PromiseCB;
+}
+
 export type RequestUpdate = {
   target: WritableAtom<any, any>;
   config?: AxiosRequestConfig;
   transformData?(data: any): any;
   read?(): Promise<any>;
+  handleLoad?: boolean;
+  onFail?: OnFail;
+  onSuccess?: OnSuccess;
 };

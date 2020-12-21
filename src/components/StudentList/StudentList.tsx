@@ -1,7 +1,7 @@
 import { Student } from "../../index.types";
-import { app, students, axios } from "../../App.atom";
+import { app, students, courses, axios } from "../../App.atom";
 import { useFetch } from "../../utils";
-import { student } from "../../api-service";
+import { student, course } from "../../api-service";
 import { useAtomValue, useUpdateAtom } from "jotai/utils";
 import { ColumnsType } from "antd/es/table";
 import { Tag, Card, Table } from "antd";
@@ -11,7 +11,14 @@ import { EditOutlined, UserAddOutlined } from "@ant-design/icons";
 
 const transformData = (res: any): Student[] => res.data;
 
-const cols: ColumnsType<Student> = [
+interface Opts {
+  courses: Course[];
+}
+interface ColGen {
+  (opts: Opts): ColumnsType<Student>;
+}
+
+const cols: ColGen = ({ courses: _courses }) => [
   {
     title: "Student Id",
     dataIndex: "studentId",
@@ -31,10 +38,12 @@ const cols: ColumnsType<Student> = [
     title: "Courses",
     dataIndex: "courses",
     key: "courses",
-    render: (courses) =>
-      courses.map((course: Course, index: number) => (
+    render: (crses) =>
+      crses.map((crs: string, index: number) => (
         <Tag color="blue" key={index}>
-          {course}
+          <Link to={`/course/edit/${crs}`}>
+            {_courses.find(({ id }) => crs === id)?.title ?? crs}
+          </Link>
         </Tag>
       )),
   },
@@ -53,10 +62,16 @@ export const StudentList = () => {
   const { loading } = useAtomValue(app);
   const data = useAtomValue(students);
   const request = useUpdateAtom(axios);
+  const crses = useAtomValue(courses);
 
   useFetch({
     target: students,
     read: () => student.READ(),
+    transformData,
+  });
+  useFetch({
+    target: courses,
+    read: () => course.READ(),
     transformData,
   });
 
@@ -71,6 +86,7 @@ export const StudentList = () => {
 
   return (
     <Card
+      className="full-inner-card-body"
       type="inner"
       title="List of students"
       extra={[
@@ -84,7 +100,7 @@ export const StudentList = () => {
       <Table<Student>
         rowKey={({ id }) => id}
         dataSource={data}
-        columns={cols}
+        columns={cols({ courses: crses })}
         loading={loading}
         pagination={{ onChange: handlePageChange }}
       />

@@ -1,11 +1,12 @@
-import { Form, Input, Select, Button, Card, message } from "antd";
+import { Form, Input, Button, Card, message } from "antd";
 import { useEffect } from "react";
 import { app, axios } from "../../App.atom";
 import { useUpdateAtom } from "jotai/utils";
 import { atom, useAtom } from "jotai";
 import { student as studentService } from "../../api-service";
-import { Student } from "../../index.types";
+import { Student, Reader } from "../../index.types";
 import { RouteChildrenProps, useParams, useHistory } from "react-router-dom";
+import { CourseSelect } from "../CourseSelect/CourseSelect";
 
 const initStudent = {
   id: "",
@@ -16,23 +17,6 @@ const initStudent = {
 };
 
 const student = atom<Student>(initStudent);
-
-interface OnSuccess {
-  (data: any): void;
-}
-interface OnFail {
-  (data: any): void;
-}
-type PromiseCB = {
-  (): Promise<any>;
-};
-interface Reader {
-  (
-    id: string,
-    onSuccess: OnSuccess | undefined,
-    onFail: OnFail | undefined
-  ): PromiseCB;
-}
 
 const reader: Reader = (
   id: string,
@@ -107,7 +91,12 @@ export const StudentAddEdit: React.FC<RouteChildrenProps> = () => {
   };
 
   return (
-    <Card type="inner" loading={loading}>
+    <Card
+      type="inner"
+      title={`${record?.id ? "Edit" : "Add"} student`}
+      loading={loading}
+      className="full-inner-card-body"
+    >
       <Form
         name="addEditStudent"
         form={form}
@@ -137,7 +126,7 @@ export const StudentAddEdit: React.FC<RouteChildrenProps> = () => {
           <Input />
         </Form.Item>
         <Form.Item label="Courses" name="courses">
-          <Select />
+          <CourseSelect />
         </Form.Item>
 
         <Form.Item

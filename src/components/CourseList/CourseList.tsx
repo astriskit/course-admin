@@ -58,6 +58,7 @@ export const CourseList = () => {
 
   return (
     <Card
+      className="full-inner-card-body"
       type="inner"
       title="List of courses"
       extra={[

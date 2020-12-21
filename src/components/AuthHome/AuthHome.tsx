@@ -12,14 +12,22 @@ export const AuthHome = () => {
   const request = useUpdateAtom(axios);
 
   useEffect(() => {
-    request({ target: profile, read: me, transformData: ({ data }) => data });
+    request({
+      target: profile,
+      read: me,
+      transformData: ({ data }) => data,
+    });
   }, [request]);
 
   const loading = state.loading;
   const color = admin ? "blue" : "geekblue";
 
   return (
-    <Card title="Welcome user!!" loading={loading}>
+    <Card
+      title="Welcome user!!"
+      loading={loading}
+      className="full-inner-card-body"
+    >
       <Tag color={color}>{`Username : ${username}`}</Tag>
       <Tag color={color}>{`Email-id : ${emailId}`}</Tag>
       <Tag color={color}>{admin ? "admin" : "non-admin"}</Tag>
