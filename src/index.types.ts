@@ -1,6 +1,6 @@
-import { RouteProps } from "react-router-dom";
 import { WritableAtom } from "jotai";
 import { AxiosRequestConfig } from "axios";
+import { ColumnsType } from "antd/es/table";
 
 export type ListOpts = {
   filter?: { key: string; value: string };
@@ -71,4 +71,19 @@ export type RequestUpdate = {
   handleLoad?: boolean;
   onFail?: OnFail;
   onSuccess?: OnSuccess;
+  deleteId?: string;
+  deleteKey?: string;
 };
+
+export interface DeleteCB {
+  (): Promise<any> | void;
+}
+
+export interface Opts {
+  courses?: Course[];
+  genDelete(id: string): DeleteCB;
+}
+
+export interface ColGen<T> {
+  (opts: Opts): ColumnsType<T>;
+}

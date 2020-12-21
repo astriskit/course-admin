@@ -40,7 +40,7 @@ export const app = atom({
   loading: false,
 });
 
-export const axios = atom(null, async (_, set, update: RequestUpdate) => {
+export const axios = atom(null, async (get, set, update: RequestUpdate) => {
   const {
     target,
     config,
@@ -49,6 +49,8 @@ export const axios = atom(null, async (_, set, update: RequestUpdate) => {
     handleLoad = true,
     onSuccess,
     onFail,
+    deleteId,
+    deleteKey = "id",
   } = update;
   if (target && (read || config)) {
     try {
@@ -63,7 +65,13 @@ export const axios = atom(null, async (_, set, update: RequestUpdate) => {
       if (transformData) {
         data = transformData(data);
       }
-      set(target, data);
+      if (deleteId) {
+        let targetData = get(target);
+        targetData = targetData.filter((d: any) => d[deleteKey] !== deleteId);
+        set(target, targetData);
+      } else {
+        set(target, data);
+      }
       handleLoad && set(app, { loading: false });
       onSuccess && onSuccess(data);
     } catch (err) {

@@ -1,16 +1,19 @@
 import { app, courses, axios } from "../../App.atom";
 import { useFetch } from "../../utils";
 import { course } from "../../api-service";
-import { Course } from "../../index.types";
+import { Course, ColGen } from "../../index.types";
 import { useAtomValue, useUpdateAtom } from "jotai/utils";
-import { ColumnsType } from "antd/es/table";
-import { Tag, Card, Table } from "antd";
+import { Tag, Card, Table, Button } from "antd";
 import { Link } from "react-router-dom";
-import { EditOutlined, UserAddOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  UserAddOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 const transformData = (res: any): Course[] => res.data;
 
-export const cols: ColumnsType<Course> = [
+export const cols: ColGen<Course> = ({ genDelete }) => [
   {
     title: "Course Id",
     dataIndex: "courseId",
@@ -35,6 +38,18 @@ export const cols: ColumnsType<Course> = [
       </Link>
     ),
   },
+  {
+    title: "Delete",
+    key: "action-delete",
+    render: (_, { id }) => (
+      <Button
+        type="text"
+        icon={<DeleteOutlined />}
+        onClick={genDelete(id)}
+        danger
+      />
+    ),
+  },
 ];
 
 export const CourseList = () => {
@@ -56,6 +71,14 @@ export const CourseList = () => {
     });
   };
 
+  const genDelete = (id: string) => () => {
+    request({
+      read: () => course.DELETE(id),
+      target: courses,
+      deleteId: id,
+    });
+  };
+
   return (
     <Card
       className="full-inner-card-body"
@@ -72,7 +95,7 @@ export const CourseList = () => {
       <Table<Course>
         rowKey={({ id }) => id}
         dataSource={data}
-        columns={cols}
+        columns={cols({ genDelete })}
         loading={loading}
         pagination={{ onChange: handlePageChange }}
       />

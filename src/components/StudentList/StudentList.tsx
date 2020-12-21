@@ -3,22 +3,18 @@ import { app, students, courses, axios } from "../../App.atom";
 import { useFetch } from "../../utils";
 import { student, course } from "../../api-service";
 import { useAtomValue, useUpdateAtom } from "jotai/utils";
-import { ColumnsType } from "antd/es/table";
-import { Tag, Card, Table } from "antd";
-import { Course } from "../../index.types";
+import { ColGen } from "../../index.types";
+import { Tag, Card, Table, Button } from "antd";
 import { Link } from "react-router-dom";
-import { EditOutlined, UserAddOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  UserAddOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 const transformData = (res: any): Student[] => res.data;
 
-interface Opts {
-  courses: Course[];
-}
-interface ColGen {
-  (opts: Opts): ColumnsType<Student>;
-}
-
-const cols: ColGen = ({ courses: _courses }) => [
+const cols: ColGen<Student> = ({ courses: _courses, genDelete }) => [
   {
     title: "Student Id",
     dataIndex: "studentId",
@@ -42,7 +38,7 @@ const cols: ColGen = ({ courses: _courses }) => [
       crses.map((crs: string, index: number) => (
         <Tag color="blue" key={index}>
           <Link to={`/course/edit/${crs}`}>
-            {_courses.find(({ id }) => crs === id)?.title ?? crs}
+            {_courses?.find(({ id }) => crs === id)?.title ?? crs}
           </Link>
         </Tag>
       )),
@@ -54,6 +50,18 @@ const cols: ColGen = ({ courses: _courses }) => [
       <Link to={`/student/edit/${id}`}>
         <EditOutlined />
       </Link>
+    ),
+  },
+  {
+    title: "Delete",
+    key: "action-delete",
+    render: (_, { id }) => (
+      <Button
+        type="text"
+        icon={<DeleteOutlined />}
+        onClick={genDelete(id)}
+        danger
+      />
     ),
   },
 ];
@@ -84,6 +92,14 @@ export const StudentList = () => {
     });
   };
 
+  const genDelete = (id: string) => () => {
+    request({
+      read: () => student.DELETE(id),
+      target: students,
+      deleteId: id,
+    });
+  };
+
   return (
     <Card
       className="full-inner-card-body"
@@ -100,7 +116,7 @@ export const StudentList = () => {
       <Table<Student>
         rowKey={({ id }) => id}
         dataSource={data}
-        columns={cols({ courses: crses })}
+        columns={cols({ courses: crses, genDelete })}
         loading={loading}
         pagination={{ onChange: handlePageChange }}
       />
