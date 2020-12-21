@@ -20,7 +20,7 @@ export const addCrudRouter = (app, key, model, authMw) => {
     const filterKey = req.query.filter_key || undefined;
     const filterValue = req.query.filter_value || undefined;
     const sortBy = req.query.sort_by || undefined;
-    const order = req.query.order || undefined;
+    const order = req.query.sort_order || undefined;
     const data = req.model.readRec({
       page,
       perPage,
