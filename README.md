@@ -1,3 +1,25 @@
+## About the project
+
+This project is a sorta full-stack; The front-end is reactjs based SPA boostrapped using CRA. And the backend is a nodejs/express api-server backed by a lowdb database engine.
+
+The intent of the app is to be able to CRUD course and students along with the relation between them. The relation of both entities is naturally such that a student can have many courses and a course can have many students so (m:n) or many to many.
+
+The user-story which is completed through this system is the feature to assign courses to students backed by authentication system.
+
+### Technical pieces included/touched -
+
+Check for `package.json`s in root and `server`.
+
+### Live instance -
+
+#### Credentials: demo/demo
+
+## Instructions to run locally or for development purposes
+
+1. Clone the repo
+
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

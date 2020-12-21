@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+import express from "express";
 
 export const addCrudRouter = (app, key, model, authMw, onDelete = null) => {
   const list = `${key}/list`;
@@ -7,7 +7,7 @@ export const addCrudRouter = (app, key, model, authMw, onDelete = null) => {
   const updateOne = `${key}/:id`;
   const deleteOne = `${key}/:id`;
 
-  const parseJSONBody = bodyParser.json();
+  const parseJSONBody = express.json();
 
   app.use(`^${key}`, (req, _, next) => {
     req.model = model;

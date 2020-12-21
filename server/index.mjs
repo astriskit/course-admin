@@ -10,16 +10,16 @@ import { addCrudRouter } from "./addCrudRouter.mjs";
 dotEnv.config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 const logger = console.log;
 const debug = true;
 
-const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
+const cryptr = new Cryptr(process.env.CA_CRYPTR_SECRET); //required
 
 const superAdmin = {
-  username: process.env.SUPER_USER_NAME,
-  password: process.env.SUPER_USER_PWD,
-  emailId: process.env.SUPER_USER_EMAIL_ID,
+  username: process.env.CA_SUPER_USER_NAME || "demo",
+  password: process.env.CA_SUPER_USER_PWD || "demo",
+  emailId: process.env.CA_SUPER_USER_EMAIL_ID || "demo@test.test",
   admin: true,
 };
 

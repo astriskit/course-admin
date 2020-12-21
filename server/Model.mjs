@@ -7,7 +7,9 @@ const getDBHandle = (db, adapterOpts) => {
   if (!db.includes(".")) {
     db += ".json";
   }
-  let dbPath = `./db/${db}`;
+
+  const dbPath = `${process.env.CB_DB_DIR || "./db"}/${db}`;
+
   if (adapterOpts) {
     adapter = new FileSync(dbPath, {
       defaultValue: { data: [] },
