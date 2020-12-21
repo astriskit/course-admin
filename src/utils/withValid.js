@@ -3,8 +3,8 @@ import { Component } from "react";
 export const withValid = ({
   isValid,
   elseRedirectTo = "/",
-  renderIfValid: RenderIfValid,
-  renderIfNotValid: RenderIfNotValid,
+  renderIfValid: RenderIfValid = null,
+  renderIfNotValid: RenderIfNotValid = null,
 }) => {
   return class extends Component {
     componentDidUpdate() {

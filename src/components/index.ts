@@ -3,3 +3,7 @@ export * from "./Login/Login";
 export * from "./GotoLogin/GotoLogin";
 export * from "./AuthHome/AuthHome";
 export * from "./Home/Home";
+export * from "./StudentList/StudentList";
+export * from "./CourseList/CourseList";
+export * from "./StudentAddEdit/StudentAddEdit";
+export * from "./CourseAddEdit/CourseAddEdit";

@@ -1,20 +1,22 @@
-// @ts-nocheck
 import { Login } from "./components";
 import { loggedIn } from "./App.atom";
-import { Home, AuthHome } from "./components";
-import { Switch, Redirect, Route, withRouter } from "react-router-dom";
+import {
+  Home,
+  AuthHome,
+  StudentList,
+  CourseList,
+  StudentAddEdit,
+  CourseAddEdit,
+} from "./components";
+import { Switch, Redirect, Route } from "react-router-dom";
 import { useAtomValue } from "jotai/utils";
-import { withValid } from "./utils";
-
-const Courses = () => <div>Hello Courses!</div>;
-const Students = () => <div>Hello Students</div>;
-
-const withValidRouter = (c) => withRouter(withValid(c));
+import { withValid as withValidRouter } from "./utils";
 
 export const AppSwitch = () => {
   const isLoggedIn = useAtomValue(loggedIn);
 
   const renderIfLoggedIn = () => isLoggedIn;
+
   const renderIfNotLoggedIn = () => !isLoggedIn;
 
   return (
@@ -24,7 +26,7 @@ export const AppSwitch = () => {
         path="/student/list"
         component={withValidRouter({
           isValid: renderIfLoggedIn,
-          renderIfValid: Students,
+          renderIfValid: StudentList,
         })}
       />
       <Route
@@ -32,15 +34,15 @@ export const AppSwitch = () => {
         path="/student/add"
         component={withValidRouter({
           isValid: renderIfLoggedIn,
-          renderIfValid: Students,
+          renderIfValid: StudentAddEdit,
         })}
       />
       <Route
         exact
-        path="/student/edit"
+        path="/student/edit/:id"
         component={withValidRouter({
           isValid: renderIfLoggedIn,
-          renderIfValid: Students,
+          renderIfValid: StudentAddEdit,
         })}
       />
       <Route
@@ -48,7 +50,7 @@ export const AppSwitch = () => {
         path="/course/list"
         component={withValidRouter({
           isValid: renderIfLoggedIn,
-          renderIfValid: Courses,
+          renderIfValid: CourseList,
         })}
       />
       <Route
@@ -56,15 +58,15 @@ export const AppSwitch = () => {
         path="/course/add"
         component={withValidRouter({
           isValid: renderIfLoggedIn,
-          renderIfValid: Courses,
+          renderIfValid: CourseAddEdit,
         })}
       />
       <Route
         exact
-        path="/course/edit"
+        path="/course/edit/:id"
         component={withValidRouter({
           isValid: renderIfLoggedIn,
-          renderIfValid: Courses,
+          renderIfValid: CourseAddEdit,
         })}
       />
       <Route

@@ -32,14 +32,10 @@ export const AppLayout: React.FC = ({ children }) => {
       history.push("/login");
     } else if (key === "student-add") {
       history.push("/student/add");
-    } else if (key === "student-edit") {
-      history.push("/student/edit");
     } else if (key === "student-list") {
       history.push("/student/list");
     } else if (key === "course-add") {
       history.push("/course/add");
-    } else if (key === "course-edit") {
-      history.push("/course/edit");
     } else if (key === "course-list") {
       history.push("/course/list");
     } else if (key === "home") {
@@ -58,12 +54,10 @@ export const AppLayout: React.FC = ({ children }) => {
             <Menu.SubMenu icon={<UserOutlined />} title="Students">
               <Menu.Item key="student-add">Add Student</Menu.Item>
               <Menu.Item key="student-list">List Students</Menu.Item>
-              <Menu.Item key="student-edit">Edit Student</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu icon={<FileOutlined />} title="Courses">
               <Menu.Item key="course-add">Add Course</Menu.Item>
               <Menu.Item key="course-list">List Courses</Menu.Item>
-              <Menu.Item key="course-edit">Edit Course</Menu.Item>
             </Menu.SubMenu>
             <Menu.Item key="logout" icon={<LogoutOutlined />}>
               Logout

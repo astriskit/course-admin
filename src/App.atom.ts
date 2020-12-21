@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { Creds, RequestUpdate } from "./index.types";
+import { Creds, RequestUpdate, Course, Student } from "./index.types";
 import { default as gAxios } from "axios";
 
 export const creds = atom(
@@ -32,6 +32,9 @@ export const profile = atom({
   emailId: "",
   admin: false,
 });
+
+export const students = atom<Student[]>([]);
+export const courses = atom<Course[]>([]);
 
 export const app = atom({
   loading: false,

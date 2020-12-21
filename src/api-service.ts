@@ -33,6 +33,7 @@ const getListOpts = (opts: ListOpts): string[][] => {
     pagination: { page = 1, perPage = 10 } = {},
     sort: { order = "", by = "" } = {},
   } = opts;
+
   return [
     ["filter_key", key],
     ["filter_value", value],
@@ -53,12 +54,14 @@ const crud = (key: string) => {
   const f_createOne = (record: any) =>
     request(createOne, "POST", { data: record });
   const f_listOne = (id: string) => request(listOne(id), "GET");
-  const f_list = (opts: ListOpts) =>
+  const f_list = (opts?: ListOpts) =>
     request(list, "GET", {
-      data: new URLSearchParams(getListOpts(opts).filter((val) => val[1])),
+      data: new URLSearchParams(
+        getListOpts(opts || {}).filter((val) => val[1])
+      ),
     });
   const f_updateOne = (id: string, record: any) =>
-    request(updateOne(id), "UPDATE", { data: record });
+    request(updateOne(id), "PUT", { data: record });
   const f_deleteOne = (id: string) => request(deleteOne(id), "DELETE");
 
   return {
