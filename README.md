@@ -12,11 +12,16 @@ Check for `package.json`s in root and `server`.
 
 ### Live instance -
 
-#### Credentials: demo/demo
+https://towering-buttered-lily.glitch.me/
+
+#### Credentials: test/test
 
 ## Instructions to run locally or for development purposes
 
-1. Clone the repo
+1. Clone the repo.
+2. Type `yarn install` in root and `/server` from inside the project-dir.
+3. Type `yarn start` in root to start the react-dev-server on port `3000` and `yarn start:dev` in `/server` to run api-server on port `3001`.
+4. Use `demo/demo` to login using the frontend.
 
 ---
 
