@@ -5,6 +5,7 @@ import { useAtom, atom } from "jotai";
 import { useUpdateAtom, useAtomValue } from "jotai/utils";
 import { ReloadOutlined } from "@ant-design/icons";
 import styles from "./CourseSelect.module.css";
+import { useEffect } from "react";
 
 const selectLoading = atom(false);
 
@@ -35,6 +36,11 @@ export const CourseSelect = ({
       transformData: ({ data }) => data,
     });
   };
+
+  useEffect(() => {
+    handleCoursesRefresh();
+    //eslint-disable-next-line
+  }, []);
 
   return (
     <div className={styles.courseSelect}>

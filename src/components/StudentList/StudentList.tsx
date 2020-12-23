@@ -3,8 +3,8 @@ import { app, students, courses, axios } from "../../App.atom";
 import { useFetch } from "../../utils";
 import { student, course } from "../../api-service";
 import { useAtomValue, useUpdateAtom } from "jotai/utils";
-import { ColGen, ListData } from "../../index.types";
-import { Tag, Card, Table, Button } from "antd";
+import { ColGen, ListData, Course } from "../../index.types";
+import { Tag, Card, Table, Button, Row, Col } from "antd";
 import { Link } from "react-router-dom";
 import {
   EditOutlined,
@@ -14,11 +14,24 @@ import {
 
 const transformData = (res: any): ListData<Student> => res.data;
 
+const renderCourses = (_courses: Course[] | undefined) => (crses: string[]) =>
+  crses.map((crs: string, index: number) => (
+    <Tag color="blue" key={index}>
+      <Link to={`/course/edit/${crs}`}>
+        {_courses?.find(({ id }) => crs === id)?.title ?? crs}
+      </Link>
+    </Tag>
+  ));
+
+const renderEmail = (val: string) => <a href={`mailto:${val}`}>{val}</a>;
+
 const cols: ColGen<Student> = ({ courses: _courses, genDelete }) => [
   {
     title: "Student Id",
     dataIndex: "studentId",
     key: "student-id",
+    responsive: ["lg"],
+    width: 110,
   },
   {
     title: "Name",
@@ -29,23 +42,23 @@ const cols: ColGen<Student> = ({ courses: _courses, genDelete }) => [
     title: "Email-id",
     dataIndex: "emailId",
     key: "email-id",
+    responsive: ["lg"],
+    render: renderEmail,
+    ellipsis: true,
   },
   {
     title: "Courses",
     dataIndex: "courses",
     key: "courses",
-    render: (crses) =>
-      crses.map((crs: string, index: number) => (
-        <Tag color="blue" key={index}>
-          <Link to={`/course/edit/${crs}`}>
-            {_courses?.find(({ id }) => crs === id)?.title ?? crs}
-          </Link>
-        </Tag>
-      )),
+    responsive: ["md"],
+    render: renderCourses(_courses),
+    ellipsis: true,
   },
   {
     title: "Edit",
+    width: 80,
     key: "action-edit",
+    align: "center",
     render: (_, { id }) => (
       <Link to={`/student/edit/${id}`}>
         <EditOutlined />
@@ -55,6 +68,8 @@ const cols: ColGen<Student> = ({ courses: _courses, genDelete }) => [
   {
     title: "Delete",
     key: "action-delete",
+    width: 80,
+    align: "center",
     render: (_, { id }) => (
       <Button
         type="text"
@@ -74,7 +89,7 @@ export const StudentList = () => {
 
   useFetch({
     target: students,
-    read: () => student.READ(),
+    read: () => student.READ({ pagination: { page: 1, perPage: 10 } }),
     transformData,
   });
   useFetch({
@@ -121,6 +136,32 @@ export const StudentList = () => {
         columns={cols({ courses: crses.data, genDelete })}
         loading={loading}
         pagination={{ onChange: handlePageChange, total: data.total }}
+        scroll={{
+          y: 420,
+        }}
+        size="middle"
+        expandable={{
+          rowExpandable: (record) => Boolean(record.courses.length),
+          expandedRowRender: (record) => {
+            const recCrses = record.courses;
+            const recCrsesStr: string[] = [];
+            for (const crses of recCrses) {
+              recCrsesStr.push(crses.toString(10));
+            }
+            return (
+              <>
+                <Row>
+                  <Col>Email:&nbsp;</Col>
+                  <Col>{renderEmail(record.emailId)}</Col>
+                </Row>
+                <Row>
+                  <Col>List of courses assigned:&nbsp;</Col>
+                  <Col>{renderCourses(crses.data)(recCrsesStr)}</Col>
+                </Row>
+              </>
+            );
+          },
+        }}
       />
     </Card>
   );

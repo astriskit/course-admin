@@ -31,7 +31,7 @@ const request = (
 const getListOpts = (opts: ListOpts): string[][] => {
   const {
     filter: { key = "", value = "" } = {},
-    pagination: { page = 1, perPage = 10 } = {},
+    pagination: { page = "", perPage = "" } = {},
     sort: { order = "", by = "" } = {},
   } = opts;
 
@@ -59,7 +59,7 @@ const crud = (key: string) => {
     const params = new URLSearchParams(
       getListOpts(opts || {}).filter((val) => val[1])
     ).toString();
-    return request(`${list}?${params}`, "GET");
+    return request(`${list}${params ? `?${params}` : ""}`, "GET");
   };
   const f_updateOne = (id: string, record: any) =>
     request(updateOne(id), "PUT", { data: record });

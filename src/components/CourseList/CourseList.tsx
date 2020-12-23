@@ -18,20 +18,26 @@ export const cols: ColGen<Course> = ({ genDelete }) => [
     title: "Course Id",
     dataIndex: "courseId",
     key: "course-id",
+    responsive: ["lg"],
+    width: 120,
   },
   {
     title: "Title",
     dataIndex: "title",
     key: "title",
+    width: 180,
   },
   {
     title: "Description",
     dataIndex: "description",
     key: "description",
+    responsive: ["md"],
   },
   {
     title: "Edit",
     key: "action-edit",
+    align: "center",
+    width: 80,
     render: (_, { id }) => (
       <Link to={`/course/edit/${id}`}>
         <EditOutlined />
@@ -41,6 +47,8 @@ export const cols: ColGen<Course> = ({ genDelete }) => [
   {
     title: "Delete",
     key: "action-delete",
+    align: "center",
+    width: 80,
     render: (_, { id }) => (
       <Button
         type="text"
@@ -59,7 +67,7 @@ export const CourseList = () => {
 
   useFetch({
     target: courses,
-    read: () => course.READ(),
+    read: () => course.READ({ pagination: { page: 1, perPage: 10 } }),
     transformData,
   });
 
@@ -93,6 +101,8 @@ export const CourseList = () => {
       ]}
     >
       <Table<Course>
+        size="middle"
+        scroll={{ y: 420 }}
         rowKey={({ id }) => id}
         dataSource={data.data}
         columns={cols({ genDelete })}

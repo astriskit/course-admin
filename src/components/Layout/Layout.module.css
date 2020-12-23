@@ -11,3 +11,16 @@
   max-height: 95vh;
   overflow: auto;
 }
+.menu {
+  height: 100%;
+}
+.sider {
+  background: transparent;
+}
+@media screen and (max-width: 576px) {
+  .sider {
+    position: absolute;
+    z-index: 100;
+    height: 100%;
+  }
+}

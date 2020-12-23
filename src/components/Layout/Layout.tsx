@@ -12,19 +12,12 @@ import {
 import { creds, loggedIn } from "../../App.atom";
 import styles from "./Layout.module.css";
 
-export const AppLayout: React.FC = ({ children }) => {
-  const [sider, setSider] = useState<boolean>(false);
+const HomeMenu = () => {
   const setCreds = useUpdateAtom(creds);
-  const isLoggedIn = useAtomValue(loggedIn);
   const history = useHistory();
-
   const logout = () => {
     setCreds({ username: "", password: "" });
   };
-  const toggleSider = () => {
-    sider ? setSider(false) : setSider(true);
-  };
-
   const handleMenuClick: MenuClickEventHandler = (ev) => {
     const key = ev.key;
     if (key === "logout") {
@@ -42,27 +35,67 @@ export const AppLayout: React.FC = ({ children }) => {
       history.push("/");
     }
   };
+  return (
+    <Menu
+      mode="inline"
+      onClick={handleMenuClick}
+      className={styles.menu}
+      defaultSelectedKeys={["home"]}
+    >
+      <Menu.Item icon={<HomeOutlined />} key="home">
+        Home
+      </Menu.Item>
+      <Menu.SubMenu icon={<UserOutlined />} title="Students">
+        <Menu.Item key="student-add">Add Student</Menu.Item>
+        <Menu.Item key="student-list">List Students</Menu.Item>
+      </Menu.SubMenu>
+      <Menu.SubMenu icon={<FileOutlined />} title="Courses">
+        <Menu.Item key="course-add">Add Course</Menu.Item>
+        <Menu.Item key="course-list">List Courses</Menu.Item>
+      </Menu.SubMenu>
+      <Menu.Item key="logout" icon={<LogoutOutlined />}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
+};
+
+export const AppLayout: React.FC = ({ children }) => {
+  const [sider, setSider] = useState<boolean>(false);
+  const [collapsedWidth, setCollapsedWidth] = useState<number>(80);
+  const isLoggedIn = useAtomValue(loggedIn);
+
+  const toggleSider = () => {
+    sider ? setSider(false) : setSider(true);
+  };
+
+  const handleBreakPoint = (broken: any) => {
+    if (broken) {
+      setCollapsedWidth(0);
+    } else {
+      setCollapsedWidth(80);
+    }
+  };
 
   return (
     <Layout>
       {isLoggedIn && (
-        <Layout.Sider onCollapse={toggleSider} collapsed={!sider} collapsible>
-          <Menu mode="inline" onClick={handleMenuClick}>
-            <Menu.Item icon={<HomeOutlined />} key="home">
-              Home
-            </Menu.Item>
-            <Menu.SubMenu icon={<UserOutlined />} title="Students">
-              <Menu.Item key="student-add">Add Student</Menu.Item>
-              <Menu.Item key="student-list">List Students</Menu.Item>
-            </Menu.SubMenu>
-            <Menu.SubMenu icon={<FileOutlined />} title="Courses">
-              <Menu.Item key="course-add">Add Course</Menu.Item>
-              <Menu.Item key="course-list">List Courses</Menu.Item>
-            </Menu.SubMenu>
-            <Menu.Item key="logout" icon={<LogoutOutlined />}>
-              Logout
-            </Menu.Item>
-          </Menu>
+        <Layout.Sider
+          className={styles.sider}
+          breakpoint="lg"
+          onCollapse={toggleSider}
+          collapsed={!sider}
+          onBreakpoint={handleBreakPoint}
+          collapsedWidth={collapsedWidth}
+          zeroWidthTriggerStyle={{
+            top: "10px",
+            background: "white",
+            color: "black",
+            boxShadow: "2px 2px whitesmoke",
+          }}
+          collapsible
+        >
+          <HomeMenu />
         </Layout.Sider>
       )}
 
